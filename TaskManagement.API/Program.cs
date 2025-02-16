@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System;
 using System.Text;
 using TaskManagement.API.Attributes;
 using TaskManagement.API.Helper.JwtTokenHelper;
@@ -68,11 +69,18 @@ try
 
     var app = builder.Build();
     var basePath = builder.Configuration.GetValue<string>("BasePath");
-
-    app.UsePathBase(basePath);
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", "TaskManagement API v1"));
-
+    var apiname = builder.Configuration.GetValue<string>("ApiName");
+    var version = builder.Configuration.GetValue<string>("ApiVersion");
+    if (!string.IsNullOrEmpty(basePath))
+    {
+        app.UsePathBase(basePath);
+    }
+    // Enable Swagger UI
+    if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", $"{apiname} {version}"));
+    }
 
     app.UseAuthentication();
     app.UseAuthorization();
