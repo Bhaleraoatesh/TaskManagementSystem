@@ -1,22 +1,28 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System;
 using System.Text;
-using TaskManagement.API.Attributes;
 using TaskManagement.API.Helper.JwtTokenHelper;
 using TaskManagement.API.Helpers;
+using TaskManagement.Persistance.Extensions;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    // ✅ Bind JwtSettings from appsettings.json
     var jwtSettings = new JwtSettings();
     builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
     builder.Services.AddSingleton(jwtSettings);
     builder.Services.AddScoped<Ijwthelper, JwtTokenHelper>();
-    // ✅ Add JWT Authentication
+
+    // Register MediatR services
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(TaskManagement.Application.Query.GetAssignedTasks.Handler).Assembly));
+
+    // Register custom services
+    builder.Services.AddServiceRegistration(builder.Configuration);
+
+    // Add JWT Authentication
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
@@ -31,11 +37,11 @@ try
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
             };
         });
-    
-    // ✅ Add services to the container.
+
+    // Add services to the container.
     builder.Services.AddControllers();
 
-    // ✅ Add Swagger services
+    // Add Swagger services
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
@@ -75,12 +81,9 @@ try
     {
         app.UsePathBase(basePath);
     }
-    // Enable Swagger UI
-    if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
-    {
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", $"{apiname} {version}"));
-    }
+    
 
     app.UseAuthentication();
     app.UseAuthorization();
@@ -91,3 +94,4 @@ catch (Exception ex)
 {
     Log.Information($"{ex.Message}");
 }
+

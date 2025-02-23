@@ -6,13 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
-    <Folder Include="Command\" />
-    <Folder Include="Payload\Model\" />
-    <Folder Include="Query\" />
-    <Folder Include="Payload\Request\" />
-    <Folder Include="Payload\Responce\" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
   </ItemGroup>
 
   <ItemGroup>
