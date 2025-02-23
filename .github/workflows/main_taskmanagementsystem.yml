@@ -63,7 +63,10 @@ jobs:
 
       - name: Delete appsettings.Development.json (if it exists)
         run: |
-          if exist "appsettings.Development.json" del "appsettings.Development.json"
+          if (Test-Path "appsettings.Development.json") {
+            Remove-Item "appsettings.Development.json"
+          }
+        shell: pwsh
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -72,3 +75,4 @@ jobs:
           app-name: 'TaskmanagementSystem'
           slot-name: 'Production'
           package: .  # This deploys the whole package, including all the updated files
+
