@@ -38,7 +38,7 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production'
+      name: 'Development'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -49,7 +49,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -60,6 +60,12 @@ jobs:
       - name: Set environment variable for connection string
         run: |
           echo "ConnectionStrings__TaskManagement=${{ secrets.AZURE_DB_CONNECTION_STRING }}" >> $GITHUB_ENV
+
+      - name: Replace connection string in appsettings.json
+        run: |
+          # Replace the placeholder with the actual connection string in appsettings.json
+          (Get-Content 'appsettings.json') -replace '"TaskManagement": "#{connectionString}"', '"TaskManagement": "${(secrets.AZURE_DB_CONNECTION_STRING}}"' | Set-Content 'appsettings.json'
+        shell: pwsh
 
       - name: Delete appsettings.Development.json (if it exists)
         run: |
