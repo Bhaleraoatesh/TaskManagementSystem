@@ -1,6 +1,5 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.Net Core app to Azure Web App - TaskmanagementSystem
 
 on:
@@ -13,7 +12,7 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -42,8 +41,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # This is required for requesting the JWT
+      contents: read # This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -58,11 +57,18 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_864A238876984D4E9F7B3C4054AE1269 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_15772A420FCA434FAA105BE0EBCAF6B5 }}
 
+      - name: Set environment variable for connection string
+        run: |
+          echo "ConnectionStrings__TaskManagement=${{ secrets.AZURE_DB_CONNECTION_STRING }}" >> $GITHUB_ENV
+
+      - name: Delete appsettings.Development.json (if it exists)
+        run: |
+          if exist "appsettings.Development.json" del "appsettings.Development.json"
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'TaskmanagementSystem'
           slot-name: 'Production'
-          package: .
-          
+          package: .  # This deploys the whole package, including all the updated files
