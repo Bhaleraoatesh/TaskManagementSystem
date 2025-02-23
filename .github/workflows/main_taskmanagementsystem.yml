@@ -64,7 +64,7 @@ jobs:
       - name: Replace connection string in appsettings.json
         run: |
           # Replace the placeholder with the actual connection string in appsettings.json
-          (Get-Content 'appsettings.json') -replace '"TaskManagement": "#{connectionString}"', '"TaskManagement": "${(secrets.AZURE_DB_CONNECTION_STRING}}"' | Set-Content 'appsettings.json'
+          (Get-Content 'appsettings.json') -replace '"TaskManagement": "#{connectionString}"', '"TaskManagement": ${(secrets.AZURE_DB_CONNECTION_STRING}}' | Set-Content 'appsettings.json'
         shell: pwsh
 
       - name: Delete appsettings.Development.json (if it exists)
