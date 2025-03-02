@@ -1,20 +1,35 @@
-﻿
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Swashbuckle.AspNetCore.Filters;
 using System.Text;
-using TaskManagement.API.Helper.JwtTokenHelper;
-using TaskManagement.API.Helpers;
+using TaskManagement.Application.Payloads.Models;
 using TaskManagement.Persistance.Extensions;
-
 try
 {
+    // Set up Serilog before creating the builder
+    Log.Logger = new LoggerConfiguration()
+      .WriteTo.Console()
+      .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+      .Enrich.FromLogContext()          
+      .CreateLogger();
+
     var builder = WebApplication.CreateBuilder(args);
+   
+    builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+
+    // Use Serilog for ASP.NET Core logging
+    builder.Host.UseSerilog(); 
+
+    Log.Information("TaskManagement.API is starting up.");
+
+    // Load JWT settings
     var jwtSettings = new JwtSettings();
     builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
     builder.Services.AddSingleton(jwtSettings);
-    builder.Services.AddScoped<Ijwthelper, JwtTokenHelper>();
 
     // Register MediatR services
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(TaskManagement.Application.Query.GetAssignedTasks.Handler).Assembly));
@@ -38,16 +53,13 @@ try
             };
         });
 
-    // Add services to the container.
+    // Add services
     builder.Services.AddControllers();
-
-    // Add Swagger services
     builder.Services.AddEndpointsApiExplorer();
+
+    // Add Swagger
     builder.Services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskManagement API", Version = "v1" });
-
-        // Add JWT Authentication to Swagger
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -57,41 +69,33 @@ try
             Scheme = "Bearer"
         });
 
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                new string[] {}
-            }
-        });
+        c.OperationFilter<SecurityRequirementsOperationFilter>();
     });
 
     var app = builder.Build();
+
     var basePath = builder.Configuration.GetValue<string>("BasePath");
     var apiname = builder.Configuration.GetValue<string>("ApiName");
     var version = builder.Configuration.GetValue<string>("ApiVersion");
-    if (!string.IsNullOrEmpty(basePath))
+
+    app.UsePathBase(basePath);
+
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-        app.UsePathBase(basePath);
-    }
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", $"{apiname} {version}"));
-    
+        c.SwaggerEndpoint(basePath + $"/swagger/{version}/swagger.json", apiname);
+    });
 
     app.UseAuthentication();
-    app.UseAuthorization();
     app.MapControllers();
     app.Run();
 }
 catch (Exception ex)
 {
-    Log.Information($"{ex.Message}");
+    Log.Information(ex.Message, "Unhandled exception occurred.");
+    Environment.Exit(1);
 }
-
+finally
+{
+    Log.CloseAndFlush(); // Ensure all log entries are flushed when the app exits
+}

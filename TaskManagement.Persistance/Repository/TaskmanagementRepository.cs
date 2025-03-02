@@ -36,6 +36,14 @@ namespace TaskManagement.Persistance.Repository
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<ValidateUserResponce> validateuser(string username, string password)
+        {
+             var connection = new SqlConnection(_connectionString);
+            var storeProcedure = _storedProcedures.TryGetValue("ValidateUser" ,out var storedProcedure);
+            var  result = await connection.QueryAsync<ValidateUserResponce>(storedProcedure!, new { @UserIdentifier = username, @PasswordHash = password }, commandType: CommandType.StoredProcedure);
+            return result.FirstOrDefault()!;
+        }
     }
 }
 

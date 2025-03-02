@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using TaskManagement.API.Attributes;
-using TaskManagement.API.Helper.JwtTokenHelper;
+using TaskManagement.Application.JwtImplementation;
+using TaskManagement.Application.Payloads.Request;
 
 namespace TaskManagement.API.Controllers
 {
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly Ijwthelper _jwtTokenHelper;
-
-        public AuthController(Ijwthelper jwtTokenHelper)
+        private readonly IMediator _mediator;
+        public AuthController(IMediator mediator)
         {
-            _jwtTokenHelper = jwtTokenHelper;
+            _mediator = mediator;
         }
 
         /// <summary>
@@ -20,12 +21,23 @@ namespace TaskManagement.API.Controllers
         /// <param name="username">User's username</param>
         /// <param name="role">User's role</param>
         /// <returns>JWT token</returns>
-        [HttpGet("jwtToken")]
+        [HttpPost("jwtToken")]
         [ValidateModelState]
-        public IActionResult GenerateToken([FromQuery] string username, [FromQuery] string role)
-        {         
-            var token = _jwtTokenHelper.GenerateToken(username, role);
-            return Ok(new { token });
+        public async Task<IActionResult> GenerateToken([FromBody] JsonPropertyName apiBody)
+        {
+            var token = await _mediator.Send(new JwtImplementation.Query(apiBody.Username!,apiBody.password!));
+            if(token == "Invalide UserName or password") 
+            { 
+                return new ObjectResult(token)
+                { 
+                    StatusCode = 401 
+                };     
+            }
+            return new ObjectResult(token)
+            {
+                StatusCode = 200
+            };             
         }
+
     }
 }

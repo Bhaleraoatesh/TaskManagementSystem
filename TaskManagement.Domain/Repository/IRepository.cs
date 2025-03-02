@@ -10,5 +10,6 @@ namespace TaskManagement.Domain.Repository
     public interface IRepository
     {
        public Task<List<GetAssignedTaskByUserId>> GetAssignedTasks(int userId);
+        public Task<ValidateUserResponce> validateuser(string username, string password);
     }
 }

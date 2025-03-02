@@ -16,4 +16,8 @@
     <ProjectReference Include="..\TaskManagement.Persistance\TaskManagement.Persistance.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Payloads\Responce\" />
+  </ItemGroup>
+
 </Project>

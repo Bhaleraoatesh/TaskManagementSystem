@@ -1,4 +1,10 @@
-﻿namespace TaskManagement.API.Helper.JwtTokenHelper
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TaskManagement.Application.Payloads.Models
 {
     public class JwtSettings
     {
