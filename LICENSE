@@ -1,0 +1,89 @@
+PROPRIETARY LICENSE AGREEMENT
+
+Task Management System
+Author: Atesh Bhalerao
+
+Last Updated: February 2026
+
+---
+
+1. GRANT OF LICENSE
+
+This license grants you, Atesh Bhalerao, a non-exclusive, non-transferable license to use the Task Management System ("Software") for personal development and proof-of-concept (POC) purposes only.
+
+2. PERMITTED USE
+
+You are permitted to:
+- Use the Software for personal development and learning
+- Use the Software for proof-of-concept (POC) development
+- Modify the Software for internal use
+- Create derivative works for personal use
+- Test the Software functionality
+- Deploy to personal development/testing environments
+- Contribute improvements, bug fixes, and enhancements via issues and pull requests
+
+3. RESTRICTIONS
+
+You are NOT permitted to:
+- Redistribute, resell, or license the Software to third parties
+- Use the Software for production purposes without explicit written authorization
+- Remove or alter any copyright notices, proprietary notices, or this license agreement
+- Use the Software for commercial purposes
+- Sublicense or transfer rights to any third party
+- Share the Software with other organizations or individuals
+- Use the Software in any public-facing application without written permission
+- Create competing products based on this Software
+- Use this Software as the basis for a commercial SaaS offering
+
+4. OWNED BY ATESH BHALERAO
+
+All rights, title, and interest in and to the Software, including all copies, modifications, and derivative works, are and shall remain the exclusive property of Atesh Bhalerao. This license does not transfer ownership of the Software to you.
+
+5. INTELLECTUAL PROPERTY RIGHTS
+
+All intellectual property rights in the Software, including without limitation copyrights, trademarks, patents, and trade secrets, are owned by Atesh Bhalerao and protected by applicable laws.
+
+6. DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. Atesh Bhalerao SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE.
+
+7. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL Atesh Bhalerao BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+8. TERMINATION
+
+This license is effective until terminated. Your rights under this license will terminate automatically without notice from Atesh Bhalerao if you fail to comply with any terms of this agreement. Upon termination, you must cease all use of the Software and destroy all copies in your possession.
+
+9. GOVERNING LAW
+
+This License Agreement shall be governed by and construed in accordance with the laws applicable in your jurisdiction, and you irrevocably submit to the exclusive jurisdiction of the courts located in that jurisdiction.
+
+10. CONFIDENTIALITY
+
+You agree to maintain the confidentiality of this Software and not disclose its contents, design, or implementation to any third party without explicit written permission from Atesh Bhalerao.
+
+11. MODIFICATION OF LICENSE
+
+Atesh Bhalerao reserves the right to modify this license agreement at any time. Any modifications will be effective immediately upon posting to the repository.
+
+12. CONTACT FOR COMMERCIAL USE
+
+For inquiries regarding commercial use, production deployment, or any licensing exceptions, please contact:
+- Author: Atesh Bhalerao
+- Email: bhalerao1214@gmail.com
+
+13. CONTRIBUTIONS
+
+Contributions are welcome and encouraged! You may:
+- Report bugs and issues via GitHub Issues
+- Submit pull requests with improvements and bug fixes
+- Suggest new features via GitHub Issues
+
+By submitting a pull request or contribution, you grant Atesh Bhalerao the right to include your contributions in the Software. Your contributions will be incorporated under the same license terms as this Software.
+
+---
+
+Copyright © 2026 Atesh Bhalerao. All rights reserved.
+
+By using this Software, you acknowledge that you have read this License Agreement, understand its terms, and agree to be bound by them.
