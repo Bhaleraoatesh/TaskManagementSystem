@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TaskManagement.Application.Payloads.Models
+﻿namespace TaskManagement.Application.Payloads.Models
 {
+    /// <summary>
+    /// Configuration settings for JWT token generation and validation
+    /// </summary>
     public class JwtSettings
     {
-        public string Key { get; set; } = string.Empty;
-        public string Issuer { get; set; } = string.Empty;
-        public string Audience { get; set; } = string.Empty;
-        public int ExpiryMinutes { get; set; }
+        public string Key { get; set; }
+        public string Issuer { get; set; }
+        public string Audience { get; set; }
+        public int AccessTokenExpirationMinutes { get; set; } = 15;
+        public int RefreshTokenExpirationDays { get; set; } = 7;
+        public bool RequireHttpsMetadata { get; set; } = true;
+        public int ClockSkewMinutes { get; set; } = 5;
     }
 }

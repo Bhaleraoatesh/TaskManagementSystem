@@ -3,7 +3,7 @@ using Dapper;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using TaskManagement.Domain.Repository;
+using TaskManagement.Domain.IRepository;
 using TaskManagement.Domain.Entity;
 
 namespace TaskManagement.Persistance.Repository
@@ -18,7 +18,7 @@ namespace TaskManagement.Persistance.Repository
         {
             _configuration = configuration;
             _configuration = Guard.Against.Null(configuration, nameof(configuration));
-            _connectionString = Guard.Against.NullOrEmpty(_configuration.GetConnectionString("TaskManagement"));
+            _connectionString = Guard.Against.NullOrEmpty(_configuration.GetConnectionString("DefaultConnection"));
             _storedProcedures = _configuration.GetSection("StoredProcedures:TaskmanagementRepository").Get<Dictionary<string, string>>()!;
         }
 

@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TaskManagement.Domain.Repository;
+using TaskManagement.Domain.IRepository;
 using TaskManagement.Persistance.Repository;
+using TaskManagement.Persistance.Repositories;
 
 namespace TaskManagement.Persistance.Extensions
 {
@@ -12,6 +13,9 @@ namespace TaskManagement.Persistance.Extensions
         {
             // Register repositories
             services.AddScoped<IRepository, TaskmanagementRepository>();
+            // Register Dapper Repositories
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         }
-    }
+    } 
 }

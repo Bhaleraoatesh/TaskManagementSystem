@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using TaskManagement.Domain.Entity;
-using TaskManagement.Domain.Repository;
+using TaskManagement.Domain.IRepository;
 namespace TaskManagement.Application.Query
 {
     public sealed class GetAssignedTasks
