@@ -2,7 +2,7 @@ name: Enterprise .NET Security Pipeline
 
 on:
   push:
-    branches: ["main", "develope"]
+    branches: [ "main", "develope" ]
   pull_request:
     branches: ["main"]
 
