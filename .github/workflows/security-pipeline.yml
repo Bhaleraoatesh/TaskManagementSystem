@@ -1,0 +1,124 @@
+name: Enterprise .NET Security Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+
+# =========================
+# BUILD + TEST
+# =========================
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run Tests
+      run: dotnet test --configuration Release --no-build --verbosity normal
+
+
+# =========================
+# CODEQL STATIC ANALYSIS
+# =========================
+  codeql:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4
+      with:
+        languages: csharp
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
+
+    - name: Analyze
+      uses: github/codeql-action/analyze@v4
+
+
+# =========================
+# DEPENDENCY VULNERABILITY SCAN
+# =========================
+  dependency-scan:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Run Dependency Scan
+      run: dotnet list package --vulnerable --include-transitive
+
+# =========================
+# SECRET SCANNING
+# =========================
+  secrets-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Run Gitleaks
+      uses: gitleaks/gitleaks-action@v2
+      with:
+        args: detect --verbose --redact
+
+
+# =========================
+# OPTIONAL: DOCKER SECURITY SCAN
+# =========================
+  docker-scan:
+    if: contains(github.event.head_commit.message, 'docker')
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build Docker Image
+      run: docker build -t taskmanagement-api .
+
+    - name: Scan Docker Image
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: taskmanagement-api
