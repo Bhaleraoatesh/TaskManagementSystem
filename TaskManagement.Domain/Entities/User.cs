@@ -12,12 +12,14 @@ namespace TaskManagement.Domain.Entities
         public int Id { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string FullName { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public DateTime? LastPasswordChangeDate { get; set; }
-        
+
         // For aggregated data from queries
         public List<Role> Roles { get; set; } = new List<Role>();
     }

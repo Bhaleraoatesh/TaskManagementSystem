@@ -50,6 +50,34 @@ namespace TaskManagement.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid request",
+                    Errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList()
+                });
+            }
+
+            var ipAddress = GetIpAddress();
+            var result = await _authenticationService.RegisterAsync(request, ipAddress);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return CreatedAtAction(nameof(GetCurrentUser), result);
+        }
+
         [HttpPost("refresh")]
         [AllowAnonymous]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)

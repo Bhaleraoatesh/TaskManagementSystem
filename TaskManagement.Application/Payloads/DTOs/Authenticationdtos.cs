@@ -4,12 +4,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskManagement.Application.Payloads.DTOs
 {
+    public class RegisterRequest
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [MinLength(6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$",
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")]
+        public string Password { get; set; }
+
+        [Required]
+        public string FullName { get; set; }
+    }
+
     public class LoginRequest
     {
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-        
+
         [Required]
         [MinLength(6)]
         public string Password { get; set; }

@@ -51,14 +51,14 @@ namespace TaskManagement.Persistance.Repositories
         public async Task<User> GetByIdAsync(int userId)
         {
             using var connection = new SqlConnection(_connectionString);
-            
+
             var sql = @"
-                SELECT 
-                    Id, Email, PasswordHash, FullName, IsActive, 
+                SELECT
+                    Id, Email, PasswordHash, FirstName, LastName, FullName, IsActive,
                     CreatedDate, LastLoginDate, LastPasswordChangeDate
-                FROM Users 
+                FROM Users
                 WHERE Id = @UserId";
-            
+
             var user = await connection.QueryFirstOrDefaultAsync<User>(sql, new { UserId = userId });
 
             if (user != null)
@@ -105,15 +105,15 @@ namespace TaskManagement.Persistance.Repositories
         public async Task<bool> CreateUserAsync(User user)
         {
             using var connection = new SqlConnection(_connectionString);
-            
+
             var sql = @"
-                INSERT INTO Users 
-                (Email, PasswordHash, FullName, IsActive, CreatedDate)
-                VALUES 
-                (@Email, @PasswordHash, @FullName, @IsActive, GETUTCDATE());
-                
+                INSERT INTO Users
+                (Email, PasswordHash, FirstName, LastName, IsActive, CreatedDate)
+                VALUES
+                (@Email, @PasswordHash, @FirstName, @LastName, @IsActive, GETUTCDATE());
+
                 SELECT CAST(SCOPE_IDENTITY() as int);";
-            
+
             user.Id = await connection.ExecuteScalarAsync<int>(sql, user);
             return user.Id > 0;
         }
@@ -124,18 +124,35 @@ namespace TaskManagement.Persistance.Repositories
         public async Task<bool> UpdateUserAsync(User user)
         {
             using var connection = new SqlConnection(_connectionString);
-            
+
             var sql = @"
                 UPDATE Users
-                SET 
+                SET
                     Email = @Email,
-                    FullName = @FullName,
+                    FirstName = @FirstName,
+                    LastName = @LastName,
                     IsActive = @IsActive,
                     PasswordHash = @PasswordHash
                 WHERE Id = @Id";
-            
+
             var rowsAffected = await connection.ExecuteAsync(sql, user);
             return rowsAffected > 0;
+        }
+
+        /// <summary>
+        /// Check if user exists by email
+        /// </summary>
+        public async Task<bool> UserExistsByEmailAsync(string email)
+        {
+            using var connection = new SqlConnection(_connectionString);
+
+            var sql = @"
+                SELECT COUNT(1)
+                FROM Users
+                WHERE Email = @Email";
+
+            var count = await connection.ExecuteScalarAsync<int>(sql, new { Email = email });
+            return count > 0;
         }
     }
 }
