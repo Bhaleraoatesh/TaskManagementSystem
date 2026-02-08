@@ -12,7 +12,7 @@ using TaskManagement.Domain.Entities;
 using TaskManagement.Persistance.Repositories;
 using TaskManagement.Domain.IRepository;
 using TaskManagement.Persistance.Extensions;
-
+using System.Text.Json;
 try
 {
     Log.Logger = new LoggerConfiguration()
@@ -36,7 +36,7 @@ try
     // Load JWT settings
     var jwtSettings = new JwtSettings();
     builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
-    
+    Log.Information("jwt settings loaded: {@JwtSettings}", JsonSerializer.Serialize(jwtSettings));
     if (string.IsNullOrEmpty(jwtSettings.Key) || jwtSettings.Key.Length < 32)
     {
         throw new InvalidOperationException("JWT Key must be at least 32 characters");
@@ -117,11 +117,11 @@ try
     });
 
     // Add Authorization policies
-    builder.Services.AddAuthorization(options =>
-    {
-        options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
-        options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Admin", "Manager"));
-    });
+    //builder.Services.AddAuthorization(options =>
+    //{
+   //     options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+     //   options.AddPolicy("RequireManagerRole", policy => policy.RequireRole("Admin", "Manager"));
+   // });
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
