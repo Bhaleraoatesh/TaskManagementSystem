@@ -44,8 +44,8 @@ namespace TaskManagement.Application.Services
                 }
 
                 var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(
-                    user, 
-                    user.PasswordHash, 
+                    user,
+                    user.PasswordHash,
                     request.Password);
 
                 if (passwordVerificationResult == PasswordVerificationResult.Failed)
@@ -72,7 +72,7 @@ namespace TaskManagement.Application.Services
 
                 var (accessToken, jwtId, accessTokenExpiration) = await _jwtTokenService
                     .GenerateAccessTokenAsync(user, roles);
-                
+
                 var refreshToken = await _jwtTokenService
                     .GenerateRefreshTokenAsync(user.Id, jwtId, ipAddress);
 
@@ -104,6 +104,73 @@ namespace TaskManagement.Application.Services
                 {
                     Success = false,
                     Message = "An error occurred during login. Please try again."
+                };
+            }
+        }
+
+        public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request, string ipAddress)
+        {
+            try
+            {
+                if (await _userRepository.UserExistsByEmailAsync(request.Email))
+                {
+                    _logger.LogWarning("Registration attempt failed - email already exists: {Email}", request.Email);
+                    return new AuthenticationResponse
+                    {
+                        Success = false,
+                        Message = "Email address is already registered"
+                    };
+                }
+
+                // Split full name into first and last name
+                var nameParts = request.FullName.Trim().Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+                var firstName = nameParts.Length > 0 ? nameParts[0] : "";
+                var lastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "";
+
+                var user = new User
+                {
+                    Email = request.Email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    IsActive = true,
+                    CreatedDate = DateTime.UtcNow
+                };
+
+                user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
+
+                var created = await _userRepository.CreateUserAsync(user);
+                if (!created)
+                {
+                    _logger.LogError("Failed to create user during registration: {Email}", request.Email);
+                    return new AuthenticationResponse
+                    {
+                        Success = false,
+                        Message = "Failed to create user account. Please try again."
+                    };
+                }
+
+                _logger.LogInformation("New user registered successfully: {UserId}, Email: {Email}", user.Id, user.Email);
+
+                return new AuthenticationResponse
+                {
+                    Success = true,
+                    Message = "Registration successful. You can now login.",
+                    User = new UserInfo
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        FullName = request.FullName,
+                        Roles = new List<string>()
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during registration for email: {Email}", request.Email);
+                return new AuthenticationResponse
+                {
+                    Success = false,
+                    Message = "An error occurred during registration. Please try again."
                 };
             }
         }

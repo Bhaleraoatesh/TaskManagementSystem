@@ -24,6 +24,7 @@ namespace TaskManagement.Domain.IRepository
         Task UpdateLastLoginAsync(int userId);
         Task<bool> CreateUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
+        Task<bool> UserExistsByEmailAsync(string email);
     }
     
     /// <summary>
